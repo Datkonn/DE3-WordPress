@@ -1,3 +1,4 @@
 .env
 nginx/certs/
 *.key
+mysqld-exporter/my.cnf
