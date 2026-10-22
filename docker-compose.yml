@@ -123,6 +123,27 @@ services:
     depends_on: [nginx]
     restart: unless-stopped
 
+  loki:
+    image: grafana/loki:3.1.1
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    networks: [frontend, backend]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:3.1.1
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks: [backend]
+    depends_on: [loki]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+
 networks:
   frontend:
   backend:
@@ -133,3 +154,4 @@ volumes:
   db_data:
   prom_data:
   grafana_data:
+  loki_data:
